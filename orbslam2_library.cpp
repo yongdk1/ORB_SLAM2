@@ -58,7 +58,7 @@ double tframe;
 enum orbslam_input_mode {mono,stereo,rgbd,automatic};
 
 static orbslam_input_mode input_mode;
-static const orbslam_input_mode default_input_mode = orbslam_input_mode::automatic;
+static const orbslam_input_mode default_input_mode = orbslam_input_mode::mono;
 
 static std::string settings_file;
 static std::string vocabulary_file;
@@ -120,7 +120,7 @@ static const float default_depth_threshold=40;
 // PERSONALIZED DATATYPE FOR ORBSLAM PARAMETERS
 // ===========================================================
 
-template<> inline const std::string  TypedParameter<orbslam_input_mode>::getValue(const void * ptr) {
+template<> inline const std::string  TypedParameter<orbslam_input_mode>::getValue(const void * ptr) const {
 	switch (*((orbslam_input_mode*) ptr))  {
 	case orbslam_input_mode::mono : return "mono";
 	case orbslam_input_mode::stereo : return "stereo";
@@ -137,13 +137,13 @@ template<> inline void  TypedParameter<orbslam_input_mode>::copyValue(orbslam_in
 template<> inline void  TypedParameter<orbslam_input_mode>::setValue(const char* optarg)  {
 
 	if (std::string(optarg) == "auto")
-	{*((orbslam_input_mode*)_ptr) = orbslam_input_mode::automatic;}
+	{*((orbslam_input_mode*)ptr_) = orbslam_input_mode::automatic;}
 	else if (std::string(optarg) == "mono")
-	{*((orbslam_input_mode*)_ptr) = orbslam_input_mode::mono;}
+	{*((orbslam_input_mode*)ptr_) = orbslam_input_mode::mono;}
 	else if (std::string(optarg) == "stereo")
-	{*((orbslam_input_mode*)_ptr) = orbslam_input_mode::stereo;}
+	{*((orbslam_input_mode*)ptr_) = orbslam_input_mode::stereo;}
 	else if (std::string(optarg) == "rgbd")
-	{*((orbslam_input_mode*)_ptr) = orbslam_input_mode::rgbd;}
+	{*((orbslam_input_mode*)ptr_) = orbslam_input_mode::rgbd;}
 	else
 	{throw std::logic_error("The argument you gave for ORBSLAM Mode is incorrect, only 'auto', 'mono', 'stereo' or 'rgbd' are valid.");}
 };
