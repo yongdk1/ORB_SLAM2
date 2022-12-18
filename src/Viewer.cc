@@ -92,6 +92,8 @@ void Viewer::Run()
     bool bFollow = true;
     bool bLocalizationMode = false;
 
+    // cv::VideoWriter video("out.avi",CV_FOURCC('M','J','P','G'),10, cv::Size(1400, 500)); 
+
     while(1)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -138,6 +140,12 @@ void Viewer::Run()
         cv::imshow("ORB-SLAM2: Current Frame",im);
         cv::waitKey(mT);
 
+        // int H = im.rows, W = im.cols;
+        // cv::Mat frame(500, 1400, CV_8UC3);
+        // frame.setTo(0);
+        // im.copyTo(frame.rowRange(0, H).colRange(0, W));
+        // video.write(frame);
+
         if(menuReset)
         {
             menuShowGraph = true;
@@ -166,6 +174,7 @@ void Viewer::Run()
     }
 
     SetFinish();
+    // video.release();
 }
 
 void Viewer::RequestFinish()

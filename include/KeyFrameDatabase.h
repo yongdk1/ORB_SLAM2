@@ -25,9 +25,12 @@
 #include <list>
 #include <set>
 
+#include "Old.h"
+
 #include "KeyFrame.h"
 #include "Frame.h"
-#include "ORBVocabulary.h"
+
+#include "SPVocabulary.h"
 
 #include<mutex>
 
@@ -63,7 +66,7 @@ protected:
   const ORBVocabulary* mpVoc;
 
   // Inverted file
-  std::vector<list<KeyFrame*> > mvInvertedFile;
+  std::vector<std::list<KeyFrame*> > mvInvertedFile;
 
   // Mutex
   std::mutex mMutex;

@@ -21,11 +21,18 @@
 #ifndef KEYFRAME_H
 #define KEYFRAME_H
 
+#include "Old.h"
+
 #include "MapPoint.h"
-#include "Thirdparty/DBoW2/DBoW2/BowVector.h"
-#include "Thirdparty/DBoW2/DBoW2/FeatureVector.h"
-#include "ORBVocabulary.h"
-#include "ORBextractor.h"
+#include "Thirdparty/DBoW3/src/DBoW3.h"
+
+#include "SPVocabulary.h"
+#include "SPextractor.h"
+
+// #include "ORBVocabulary.h"
+// #include "ORBextractor.h"
+
+
 #include "Frame.h"
 #include "KeyFrameDatabase.h"
 
@@ -167,8 +174,8 @@ public:
     const cv::Mat mDescriptors;
 
     //BoW
-    DBoW2::BowVector mBowVec;
-    DBoW2::FeatureVector mFeatVec;
+    DBoW3::BowVector mBowVec;
+    DBoW3::FeatureVector mFeatVec;
 
     // Pose relative to parent (this is computed when bad flag is activated)
     cv::Mat mTcp;

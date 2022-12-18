@@ -24,7 +24,8 @@
 #include<opencv2/core/core.hpp>
 #include<opencv2/features2d/features2d.hpp>
 
-#include"ORBmatcher.h"
+#include "SPmatcher.h"
+
 #include"FrameDrawer.h"
 #include"Converter.h"
 #include"Map.h"
@@ -113,8 +114,12 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
     int nFeatures = fSettings["ORBextractor.nFeatures"];
     float fScaleFactor = fSettings["ORBextractor.scaleFactor"];
     int nLevels = fSettings["ORBextractor.nLevels"];
-    int fIniThFAST = fSettings["ORBextractor.iniThFAST"];
-    int fMinThFAST = fSettings["ORBextractor.minThFAST"];
+
+    float fIniThFAST;
+    float fMinThFAST;
+
+    fIniThFAST = fSettings["ORBextractor.iniThFAST"];
+    fMinThFAST = fSettings["ORBextractor.minThFAST"];
 
     mpORBextractorLeft = new ORBextractor(nFeatures,fScaleFactor,nLevels,fIniThFAST,fMinThFAST);
 
@@ -562,10 +567,11 @@ void Tracking::StereoInitialization()
 
 void Tracking::MonocularInitialization()
 {
-
+    // cout << "Tracking::MonocularInitialization" << endl;
     if(!mpInitializer)
     {
         // Set Reference Frame
+        // cout << " mCurrentFrame.mvKeys: " << mCurrentFrame.mvKeys.size() << endl;
         if(mCurrentFrame.mvKeys.size()>100)
         {
             mInitialFrame = Frame(mCurrentFrame);
@@ -596,8 +602,10 @@ void Tracking::MonocularInitialization()
         }
 
         // Find correspondences
-        ORBmatcher matcher(0.9,true);
+        ORBmatcher matcher(0.9, true);   // deng origin 0.9
         int nmatches = matcher.SearchForInitialization(mInitialFrame,mCurrentFrame,mvbPrevMatched,mvIniMatches,100);
+
+        // cout << "nmatches: " << nmatches << endl;
 
         // Check if there are enough correspondences
         if(nmatches<100)
@@ -611,8 +619,12 @@ void Tracking::MonocularInitialization()
         cv::Mat tcw; // Current Camera Translation
         vector<bool> vbTriangulated; // Triangulated Correspondences (mvIniMatches)
 
+        cout << "start to intialize..." << endl;
+
         if(mpInitializer->Initialize(mCurrentFrame, mvIniMatches, Rcw, tcw, mvIniP3D, vbTriangulated))
         {
+            cout << "intializing..." << endl;
+
             for(size_t i=0, iend=mvIniMatches.size(); i<iend;i++)
             {
                 if(mvIniMatches[i]>=0 && !vbTriangulated[i])
@@ -765,6 +777,7 @@ bool Tracking::TrackReferenceKeyFrame()
     vector<MapPoint*> vpMapPointMatches;
 
     int nmatches = matcher.SearchByBoW(mpReferenceKF,mCurrentFrame,vpMapPointMatches);
+    cout << "TrackReferenceKeyFrame-SearchByBoW: " << nmatches << endl;
 
     if(nmatches<15)
         return false;
@@ -883,6 +896,7 @@ bool Tracking::TrackWithMotionModel()
     else
         th=7;
     int nmatches = matcher.SearchByProjection(mCurrentFrame,mLastFrame,th,mSensor==System::MONOCULAR);
+    cout << "TrackMotion-SearchByProjection: " << nmatches << endl;
 
     // If few matches, uses a wider window search
     if(nmatches<20)
@@ -1033,6 +1047,9 @@ bool Tracking::NeedNewKeyFrame()
     const bool c1c =  mSensor!=System::MONOCULAR && (mnMatchesInliers<nRefMatches*0.25 || bNeedToInsertClose) ;
     // Condition 2: Few tracked points compared to reference keyframe. Lots of visual odometry compared to map matches.
     const bool c2 = ((mnMatchesInliers<nRefMatches*thRefRatio|| bNeedToInsertClose) && mnMatchesInliers>15);
+
+    cout << c1a << c1b << c1c << c2 << endl;
+    cout << mnMatchesInliers << ' ' << nRefMatches << endl;
 
     if((c1a||c1b||c1c)&&c2)
     {

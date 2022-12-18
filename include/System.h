@@ -26,6 +26,8 @@
 #include<thread>
 #include<opencv2/core/core.hpp>
 
+#include "Old.h"
+
 #include "Tracking.h"
 #include "FrameDrawer.h"
 #include "MapDrawer.h"
@@ -33,7 +35,10 @@
 #include "LocalMapping.h"
 #include "LoopClosing.h"
 #include "KeyFrameDatabase.h"
-#include "ORBVocabulary.h"
+
+#include "SPVocabulary.h"
+
+
 #include "Viewer.h"
 
 namespace ORB_SLAM2
@@ -42,7 +47,7 @@ namespace ORB_SLAM2
 class Viewer;
 class FrameDrawer;
 class Map;
-class Tracking;
+// class Tracking;
 class LocalMapping;
 class LoopClosing;
 
