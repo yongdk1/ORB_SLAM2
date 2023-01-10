@@ -74,13 +74,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     //     exit(-1);
     // }
     // cout << "Vocabulary loaded!" << endl << endl;
-    bool bVocLoad = false;
-    bVocLoad = mpVocabulary->load(strVocFile);
-    if(!bVocLoad)
-    {
-        cerr << "Faild to load vocabulary at: " << strVocFile << endl;
-        exit(-1);
-    }
+    mpVocabulary->load(strVocFile);
     cout << "Vocabulary loaded!" << endl << endl;
 
     //Create KeyFrame Database
