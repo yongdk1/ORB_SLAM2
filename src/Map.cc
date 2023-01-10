@@ -224,7 +224,7 @@ void Map::_WriteMapPoint(std::ofstream &f, MapPoint* mp) {
 }
 
 
-void Map::_WriteKeyFrame(std::ofstream &f, KeyFrame* kf, map<MapPoint*, unsigned long int>& idx_of_mp) {
+void Map::_WriteKeyFrame(std::ofstream &f, KeyFrame* kf, std::map<MapPoint*, unsigned long int>& idx_of_mp) {
   f.write((char*)&kf->mnId, sizeof(kf->mnId));                 // id: long unsigned int
   f.write((char*)&kf->mTimeStamp, sizeof(kf->mTimeStamp));     // ts: double
 
