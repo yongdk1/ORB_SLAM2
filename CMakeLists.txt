@@ -5,10 +5,6 @@ IF(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 ENDIF()
 
-# First build deps !
-ADD_SUBDIRECTORY(Thirdparty/DBoW2)
-ADD_SUBDIRECTORY(Thirdparty/g2o)
-
 # Set your path of packages.
 # If cmake cannot find opencv or eigen3, try to set the path manually as following.
 # set(Torch_DIR "/home/dyong003/libtorch/share/cmake/Torch")  # libtorch
