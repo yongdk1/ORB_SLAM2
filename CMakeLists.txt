@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
-project(SuperPoint_SLAM)
+project(spslam)
 
-IF(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-ENDIF()
+# First build deps !
+ADD_SUBDIRECTORY(Thirdparty/DBoW3)
+ADD_SUBDIRECTORY(Thirdparty/g2o)
 
 # Set your path of packages.
 # If cmake cannot find opencv or eigen3, try to set the path manually as following.
@@ -102,8 +102,8 @@ ${TORCH_LIBRARIES}
 ${OpenCV_LIBS}
 ${EIGEN3_LIBS}
 ${Pangolin_LIBRARIES}
-${PROJECT_SOURCE_DIR}/Thirdparty/DBoW3/lib/libDBoW3.so
-${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+DBoW3
+g2o
 )
 
 # Build examples
