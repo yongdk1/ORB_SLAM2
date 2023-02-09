@@ -74,7 +74,7 @@ static slambench::outputs::Output *frame2_output;
 static slambench::TimeStamp last_frame_timestamp;
 
 static const std::string default_settings_file = "";
-static const std::string default_vocabulary_file = "/home/duankai/spslam/Vocabulary/superpoint_voc.yml";
+static const std::string default_vocabulary_file = "~/spslam/Vocabulary/superpoint_voc.yml";
 
 
 ORB_SLAM2::System* SLAM;
@@ -98,18 +98,18 @@ static slambench::io::CameraSensor *grey_sensor_two = nullptr;
 static int max_features;
 static const int default_max_features=1000;
 static int pyramid_levels;
-static const int default_pyramid_levels=8;
+static const int default_pyramid_levels=4;
 static float scale_factor;
 static const float default_scale_factor=1.2;    
 static int initial_fast_threshold;
-static const int default_initial_fast_threshold=20;
+static const int default_initial_fast_threshold=0.015;
 static int second_fast_threshold;
-static const int default_second_fast_threshold=7;
+static const int default_second_fast_threshold=0.007;
 
 
 
 static int camera_fps;
-static const int default_camera_fps=40;
+static const int default_camera_fps=30;
 
 static float depth_threshold;
 static const float default_depth_threshold=40;
