@@ -215,7 +215,7 @@ void Map::clear()
 
 
 
-void Map::_WriteMapPoint(ofstream &f, MapPoint* mp) {
+void Map::_WriteMapPoint(std::ofstream &f, MapPoint* mp) {
   f.write((char*)&mp->mnId, sizeof(mp->mnId));               // id: long unsigned int
   cv::Mat wp = mp->GetWorldPos();
   f.write((char*)&wp.at<float>(0), sizeof(float));           // pos x: float

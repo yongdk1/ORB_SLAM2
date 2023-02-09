@@ -59,6 +59,9 @@ public:
 
     void clear();
 
+    bool Save(const string &filename);
+    //bool Load(const string &filename, ORBVocabulary &voc);
+
     std::vector<KeyFrame*> mvpKeyFrameOrigins;
 
     std::mutex mMutexMapUpdate;
