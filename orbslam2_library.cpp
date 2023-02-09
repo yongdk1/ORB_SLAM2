@@ -74,7 +74,7 @@ static slambench::outputs::Output *frame2_output;
 static slambench::TimeStamp last_frame_timestamp;
 
 static const std::string default_settings_file = "";
-static const std::string default_vocabulary_file = "~/spslam/Vocabulary/superpoint_voc.yml";
+static const std::string default_vocabulary_file = "/home/dyong003/spslam/Vocabulary/superpoint_voc.yml";
 
 
 ORB_SLAM2::System* SLAM;
