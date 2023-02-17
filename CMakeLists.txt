@@ -7,8 +7,8 @@ ADD_SUBDIRECTORY(Thirdparty/g2o)
 
 # Set your path of packages.
 # If cmake cannot find opencv or eigen3, try to set the path manually as following.
-# set(Torch_DIR "/home/dyong003/libtorch/share/cmake/Torch")  # libtorch
-set(Torch_DIR "/home/dyong003/pytorch/torch/lib/tmp_install/share/cmake/Torch")  # libtorch
+set(Torch_DIR "/home/dyong003/libtorch/share/cmake/Torch")  # libtorch
+# set(Torch_DIR "/home/dyong003/pytorch/torch/lib/tmp_install/share/cmake/Torch")  # libtorch
 # set(OpenCV_DIR "/usr/share/OpenCV")   # opencv
 # set(Eigen3_DIR "/usr/lib/cmake/eigen3")    # eigen3
 
@@ -27,6 +27,7 @@ CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if(COMPILER_SUPPORTS_CXX14)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
    add_definitions(-DCOMPILEDWITHC14)
+   add_definitions(-DCOMPILEDWITHC11)
    message(STATUS "Using flag -std=c++14.")
 elseif(COMPILER_SUPPORTS_CXX11)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
