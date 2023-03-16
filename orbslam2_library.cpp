@@ -96,7 +96,7 @@ static slambench::io::CameraSensor *grey_sensor_two = nullptr;
 // ===========================================================
 
 static int max_features;
-static const int default_max_features=1000;
+static const int default_max_features=2000;
 static int pyramid_levels;
 static const int default_pyramid_levels=4;
 static float scale_factor;
