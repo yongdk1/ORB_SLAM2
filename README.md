@@ -1,3 +1,101 @@
+# TLDR: Build and Run
+
+This assumes that you have already built and run ORB-SLAM2 (in the master branch)
+
+## Additional Dependencies
+
+### Libtorch v1.0.1
+
+```bash
+sudo apt-get -y install python-yaml python-typing
+```
+
+```bash
+sudo git clone --recursive -b v1.0.1 https://github.com/pytorch/pytorch
+```
+
+to fix in case of submodule error:
+
+```bash
+git checkout v1.0.1
+git submodule sync
+git submodule update --init --recursive
+```
+
+```bash
+cd pytorch && sudo mkdir build && cd build
+sudo python ../tools/build_libtorch.py
+
+```
+
+if error:
+
+```bash
+sudo vi /home/dyong003/pytorch/third_party/ideep/mkl-dnn/src/common/utils.cpp
+
+```
+
+change strncpy → memcpy
+
+## Build
+
+```bash
+sudo git clone -b spslam https://github.com/yongdk1/ORB_SLAM2.git spslam
+```
+
+*in CMakelist.txt*
+
+```bash
+set(TORCH_DIR "PATH_TO/pytorch/torch/lib/tmp_install/share/cmake/Torch")
+```
+
+If ATEN errors arise, follow advice here:
+[https://github.com/jiexiong2016/GCNv2_SLAM/issues/47](https://github.com/jiexiong2016/GCNv2_SLAM/issues/47)
+
+```bash
+cd spslam
+chmod +x build.sh
+./build.sh
+```
+
+## Run
+### Download Vocabulary
+
+You can download the vocabulary from [google drive](https://drive.google.com/file/d/1p1QEXTDYsbpid5ELp3IApQ8PGgm_vguC/view?usp=sharing) or [BaiduYun](https://pan.baidu.com/s/1fygQil78GpoPm0zoi6BMng) (code: de3g). And then put it into `Vocabulary` directory. The vocabulary was trained on [Bovisa_2008-09-01](http://www.rawseeds.org/rs/datasets/view//7) using DBoW3 library. Branching factor k and depth levels L are set to 5 and 10 respectively.
+
+### To run:
+
+#### TUM Dataset
+
+1. Download a sequence from http://vision.in.tum.de/data/datasets/rgbd-dataset/download and uncompress it.
+
+2. Execute the following command. Change `TUMX.yaml` to TUM1.yaml,TUM2.yaml or TUM3.yaml for freiburg1, freiburg2 and freiburg3 sequences respectively. Change `PATH_TO_SEQUENCE_FOLDER`to the uncompressed sequence folder.
+```
+./Examples/Monocular/mono_tum Vocabulary/ORBvoc.txt Examples/Monocular/TUMX.yaml PATH_TO_SEQUENCE_FOLDER
+```
+
+#### KITTI Dataset  
+
+1. Download the dataset (grayscale images) from http://www.cvlibs.net/datasets/kitti/eval_odometry.php 
+
+2. Execute the following command. Change `KITTIX.yaml`by KITTI00-02.yaml, KITTI03.yaml or KITTI04-12.yaml for sequence 0 to 2, 3, and 4 to 12 respectively. Change `PATH_TO_DATASET_FOLDER` to the uncompressed dataset folder. Change `SEQUENCE_NUMBER` to 00, 01, 02,.., 11. 
+```
+./Examples/Monocular/mono_kitti Vocabulary/ORBvoc.txt Examples/Monocular/KITTIX.yaml PATH_TO_DATASET_FOLDER/dataset/sequences/SEQUENCE_NUMBER
+```
+
+#### EuRoC Dataset
+
+1. Download a sequence (ASL format) from http://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets
+
+2. Execute the following first command for V1 and V2 sequences, or the second command for MH sequences. Change PATH_TO_SEQUENCE_FOLDER and SEQUENCE according to the sequence you want to run.
+```
+./Examples/Monocular/mono_euroc Vocabulary/ORBvoc.txt Examples/Monocular/EuRoC.yaml PATH_TO_SEQUENCE_FOLDER/mav0/cam0/data Examples/Monocular/EuRoC_TimeStamps/SEQUENCE.txt 
+```
+
+```
+./Examples/Monocular/mono_euroc Vocabulary/ORBvoc.txt Examples/Monocular/EuRoC.yaml PATH_TO_SEQUENCE/cam0/data Examples/Monocular/EuRoC_TimeStamps/SEQUENCE.txt 
+```
+
 # SuperPoint-SLAM
 
 **UPDATE: This repo is no longer maintained now. Please refer to https://github.com/jiexiong2016/GCNv2_SLAM if you are intereseted in SLAM with deep learning image descriptors.**
