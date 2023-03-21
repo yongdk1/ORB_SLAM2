@@ -30,7 +30,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-//Headers required for ORB_SLAM2
+//Headers required for SPSLAM
 #include <opencv2/core/core.hpp>
 #include <System.h>
 #include <FrameDrawer.h>
@@ -55,10 +55,10 @@ cv::Mat* img_two;
 
 double tframe;
 
-enum orbslam_input_mode {mono,stereo,rgbd,automatic};
+enum spslam_input_mode {mono,stereo,rgbd,automatic};
 
-static orbslam_input_mode input_mode;
-static const orbslam_input_mode default_input_mode = orbslam_input_mode::mono;
+static spslam_input_mode input_mode;
+static const spslam_input_mode default_input_mode = spslam_input_mode::mono;
 
 static std::string settings_file;
 static std::string vocabulary_file;
@@ -74,6 +74,8 @@ static slambench::outputs::Output *frame2_output;
 static slambench::TimeStamp last_frame_timestamp;
 
 static const std::string default_settings_file = "";
+
+// modify this line to the location of superpoint_voc.yml on your local machine:
 static const std::string default_vocabulary_file = "/home/dyong003/spslam/Vocabulary/superpoint_voc.yml";
 
 
@@ -117,35 +119,35 @@ static const float default_depth_threshold=40;
 
 
 // ===========================================================
-// PERSONALIZED DATATYPE FOR ORBSLAM PARAMETERS
+// PERSONALIZED DATATYPE FOR SPSLAM PARAMETERS
 // ===========================================================
 
-template<> inline const std::string  TypedParameter<orbslam_input_mode>::getValue(const void * ptr) const {
-	switch (*((orbslam_input_mode*) ptr))  {
-	case orbslam_input_mode::mono : return "mono";
-	case orbslam_input_mode::stereo : return "stereo";
-	case orbslam_input_mode::rgbd : return "rgbd";
-	case orbslam_input_mode::automatic : return "auto";
+template<> inline const std::string  TypedParameter<spslam_input_mode>::getValue(const void * ptr) const {
+	switch (*((spslam_input_mode*) ptr))  {
+	case spslam_input_mode::mono : return "mono";
+	case spslam_input_mode::stereo : return "stereo";
+	case spslam_input_mode::rgbd : return "rgbd";
+	case spslam_input_mode::automatic : return "auto";
 	}
 	return "error";
 };
 
-template<> inline void  TypedParameter<orbslam_input_mode>::copyValue(orbslam_input_mode *to , orbslam_input_mode const *from) {
+template<> inline void  TypedParameter<spslam_input_mode>::copyValue(spslam_input_mode *to , spslam_input_mode const *from) {
 	*to = *from;
 };
 
-template<> inline void  TypedParameter<orbslam_input_mode>::setValue(const char* optarg)  {
+template<> inline void  TypedParameter<spslam_input_mode>::setValue(const char* optarg)  {
 
 	if (std::string(optarg) == "auto")
-	{*((orbslam_input_mode*)ptr_) = orbslam_input_mode::automatic;}
+	{*((spslam_input_mode*)ptr_) = spslam_input_mode::automatic;}
 	else if (std::string(optarg) == "mono")
-	{*((orbslam_input_mode*)ptr_) = orbslam_input_mode::mono;}
+	{*((spslam_input_mode*)ptr_) = spslam_input_mode::mono;}
 	else if (std::string(optarg) == "stereo")
-	{*((orbslam_input_mode*)ptr_) = orbslam_input_mode::stereo;}
+	{*((spslam_input_mode*)ptr_) = spslam_input_mode::stereo;}
 	else if (std::string(optarg) == "rgbd")
-	{*((orbslam_input_mode*)ptr_) = orbslam_input_mode::rgbd;}
+	{*((spslam_input_mode*)ptr_) = spslam_input_mode::rgbd;}
 	else
-	{throw std::logic_error("The argument you gave for ORBSLAM Mode is incorrect, only 'auto', 'mono', 'stereo' or 'rgbd' are valid.");}
+	{throw std::logic_error("The argument you gave for SPSLAM Mode is incorrect, only 'auto', 'mono', 'stereo' or 'rgbd' are valid.");}
 };
 
 
@@ -161,7 +163,7 @@ cv::Mat M1l,M2l,M1r,M2r;
 
 bool sb_new_slam_configuration(SLAMBenchLibraryHelper * slam_settings) {
 
-	slam_settings->addParameter(TypedParameter<orbslam_input_mode>("m", "mode",     "select input mode (auto,mono,stereo,rgbd)",    &input_mode, &default_input_mode));
+	slam_settings->addParameter(TypedParameter<spslam_input_mode>("m", "mode",     "select input mode (auto,mono,stereo,rgbd)",    &input_mode, &default_input_mode));
 	slam_settings->addParameter(TypedParameter<std::string>("s", "settings",     "Path to the setting file",    &settings_file, &default_settings_file));
 	slam_settings->addParameter(TypedParameter<std::string>("voc", "vocabulary",     "Path to the vocabulary file",    &vocabulary_file, &default_vocabulary_file));
 
@@ -201,18 +203,18 @@ bool sb_init_slam_system(SLAMBenchLibraryHelper * slam_settings)  {
 
 	}
 
-	if ( input_mode == orbslam_input_mode::automatic ) {
-	  if (rgb_sensor || grey_sensor_one) input_mode = orbslam_input_mode::mono;
-	  if (rgb_sensor && depth_sensor) input_mode = orbslam_input_mode::rgbd;
-	  if (grey_sensor_one && grey_sensor_two) input_mode = orbslam_input_mode::stereo;
+	if ( input_mode == spslam_input_mode::automatic ) {
+	  if (rgb_sensor || grey_sensor_one) input_mode = spslam_input_mode::mono;
+	  if (rgb_sensor && depth_sensor) input_mode = spslam_input_mode::rgbd;
+	  if (grey_sensor_one && grey_sensor_two) input_mode = spslam_input_mode::stereo;
 	}
 	  
 
 	//=========================================================================
-	// We parametrize ORBSLAM2 given the current mode
+	// We parametrize SPSLAM given the current mode
 	//=========================================================================
 
-	if ( input_mode == orbslam_input_mode::rgbd ) {
+	if ( input_mode == spslam_input_mode::rgbd ) {
 
 
 		//=========================================================================
@@ -289,7 +291,7 @@ bool sb_init_slam_system(SLAMBenchLibraryHelper * slam_settings)  {
 		}
 		SLAM->mpTracker->PrintConfig();
 
-	} else if  ( input_mode == orbslam_input_mode::mono ) {
+	} else if  ( input_mode == spslam_input_mode::mono ) {
 
 
 		//=========================================================================
@@ -374,7 +376,7 @@ bool sb_init_slam_system(SLAMBenchLibraryHelper * slam_settings)  {
 
 		SLAM->mpTracker->PrintConfig();
 
-	} else  if ( input_mode == orbslam_input_mode::stereo ) {
+	} else  if ( input_mode == spslam_input_mode::stereo ) {
 
 
 		//=========================================================================
@@ -518,7 +520,7 @@ bool sb_init_slam_system(SLAMBenchLibraryHelper * slam_settings)  {
 		cv::initUndistortRectifyMap(K_r,D_r,R_r,P_r.rowRange(0,3).colRange(0,3),cv::Size(cols_r,rows_r),CV_32F,M1r,M2r);
 
 
-	}  else if (input_mode == orbslam_input_mode::automatic) {
+	}  else if (input_mode == spslam_input_mode::automatic) {
 		std::cout << "No valid sensor found." << std::endl;
 		exit(1);
 	} else {
@@ -570,23 +572,23 @@ bool sb_update_frame (SLAMBenchLibraryHelper * , slambench::io::SLAMFrame* s) {
 		s->FreeData();
 	}
 	last_frame_timestamp = s->Timestamp;
-	return (input_mode == orbslam_input_mode::rgbd and depth_ready and rgb_ready) or
-			(input_mode == orbslam_input_mode::mono and rgb_ready) or
-			(input_mode == orbslam_input_mode::mono and grey_one_ready) or
-			(input_mode == orbslam_input_mode::stereo and grey_one_ready and grey_two_ready);
+	return (input_mode == spslam_input_mode::rgbd and depth_ready and rgb_ready) or
+			(input_mode == spslam_input_mode::mono and rgb_ready) or
+			(input_mode == spslam_input_mode::mono and grey_one_ready) or
+			(input_mode == spslam_input_mode::stereo and grey_one_ready and grey_two_ready);
 }
 
 bool sb_process_once (SLAMBenchLibraryHelper * slam_settings)  {
 
 
-	if (input_mode == orbslam_input_mode::rgbd) {
+	if (input_mode == spslam_input_mode::rgbd) {
 
 		depth_ready = false;
 		rgb_ready = false;
 
 		SLAM->TrackRGBD(*imRGB,*imD,tframe);
 
-	} else if (input_mode == orbslam_input_mode::mono) {
+	} else if (input_mode == spslam_input_mode::mono) {
 
 
 
@@ -598,7 +600,7 @@ bool sb_process_once (SLAMBenchLibraryHelper * slam_settings)  {
 		grey_one_ready = false;
 
 
-	} else if (input_mode == orbslam_input_mode::stereo) {
+	} else if (input_mode == spslam_input_mode::stereo) {
 
 
 		grey_one_ready = false;

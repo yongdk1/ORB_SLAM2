@@ -92,7 +92,7 @@ src/Viewer.cc
 )
 
 add_library(${PROJECT_NAME}-original SHARED
-  orbslam2_library.cpp
+  spslam_library.cpp
   )
 
 target_link_libraries(${PROJECT_NAME}-original
