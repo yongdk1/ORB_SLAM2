@@ -1,3 +1,11 @@
+# Repository Overview
+
+This master branch and the spslam branch contain updated versions of ORB-SLAM2 and SuperPoint-SLAM [https://github.com/KinglittleQ/SuperPoint_SLAM] respectively with standalone build documentation.
+
+orbslam2-slambench and spslam-slambench are branches intended for use with SLAMBench as modified here: [https://github.com/yongdk1/slambench)]
+
+After building and running master branch, you may switch to the spslam branch to build and run as well.
+
 # TLDR: Build and Run
 ## Dependencies
 ### OpenCV 3.2.0
