@@ -1,3 +1,98 @@
+# TLDR: Build and Run
+## Dependencies
+### OpenCV 3.2.0
+```bash 
+sudo apt-get update
+sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu xenial-security main"
+sudo apt-get -y install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+
+wget -O opencv-3.2.0.zip https://github.com/opencv/opencv/archive/refs/tags/3.2.0.zip
+wget -O opencv_contrib-3.2.0.zip https://github.com/opencv/opencv_contrib/archive/refs/tags/3.2.0.zip
+
+unzip opencv-3.2.0.zip
+unzip opencv_contrib-3.2.0.zip
+
+cd opencv-3.2.0
+mkdir build
+cd build
+```
+There may be missing defines according to https://stackoverflow.com/questions/46884682/error-in-building-opencv-with-ffmpeg
+My solution is to grep the missing defines (2 in total) from FFmpeg by using *grep -r* which leads to the following code found in *libavcodec/avcodec.h*:
+
+```
+#define AV_CODEC_FLAG_GLOBAL_HEADER (1 << 22)
+#define CODEC_FLAG_GLOBAL_HEADER AV_CODEC_FLAG_GLOBAL_HEADER
+#define AVFMT_RAWPICTURE 0x0020
+```
+
+Copy and paste it to the top of:
+
+```
+opencv-3.2.0/modules/videoio/src/cap_ffmpeg_impl.hpp
+```
+
+Compile and everything works even with the latest sources
+
+**build without CUDA**
+
+```bash
+sudo cmake -D CMAKE_BUILD_TYPE=Release \
+-D ENABLE_PRECOMPILED_HEADERS=OFF \
+-D CMAKE_INSTALL_PREFIX=/usr/local/ ..
+
+sudo make -j8
+
+sudo make install
+
+```
+
+Add to path
+
+```bash
+sudo /bin/bash -c 'echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf'
+sudo ldconfig
+```
+
+```bash
+pkg-config opencv --modversion
+```
+
+### Pangolin 0.5
+
+```bash
+sudo apt-get -y install libglew-dev libpython2.7-dev
+git clone --recursive https://github.com/stevenlovegrove/Pangolin.git -b v0.5
+
+cd Pangolin && sudo mkdir build && cd build
+sudo cmake ..
+sudo make -j8
+sudo make install
+```
+
+to fix errors: correct ~/Pangolin/src/video/drivers/ffmpeg.cpp as in commit below
+
+[https://github.com/stevenlovegrove/Pangolin/pull/318/commits/b56a041ca1586ebaac0659892e5ba381e0a4288d]
+
+### Eigen3 (installed at /usr/include/eigen3/eigen) ← should be already installed
+
+```bash
+sudo apt-get install libeigen3-dev
+```
+
+## Build
+
+```bash
+git clone https://github.com/yongdk1/ORB_SLAM2.git orbslam2
+```
+
+```bash
+cd orbslam2
+sudo chmod +x build.sh
+./build.sh
+```
+
+## Run: see section 4, monocular examples
+
 # ORB-SLAM2
 **Authors:** [Raul Mur-Artal](http://webdiis.unizar.es/~raulmur/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/), [J. M. M. Montiel](http://webdiis.unizar.es/~josemari/) and [Dorian Galvez-Lopez](http://doriangalvez.com/) ([DBoW2](https://github.com/dorian3d/DBoW2))
 
